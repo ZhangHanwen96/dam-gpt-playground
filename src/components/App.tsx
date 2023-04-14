@@ -1,103 +1,75 @@
-import Avatar from 'components/Avatar'
+import { ConfigProvider, Switch, theme } from 'antd'
+import { RollbackOutlined, LeftOutlined } from '@ant-design/icons'
+import { useLocation, Outlet, useNavigate } from 'react-router-dom'
+import 'antd/dist/reset.css'
+import Home from 'pages/Home'
+import useTheme from '@/hooks/useTheme'
+import './App.css'
+import {
+  generateAuthBySSOTzCode,
+  SSOLoginPlatformType
+} from '@tezign/foundation-common/lib/utils/auth'
+
+const { darkAlgorithm, defaultAlgorithm } = theme
 
 function App() {
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const { toggleTheme, theme } = useTheme()
+
   return (
-    <div className="relative overflow-hidden bg-white">
-      <div className="h-screen sm:pt-24 sm:pb-40 lg:pt-40 lg:pb-48">
-        <div className="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
-          <div className="sm:max-w-lg">
-            <div className="my-4">
-              <Avatar
-                size="large"
-                src="https://www.gravatar.com/avatar/4405735f6f3129e0286d9d43e7b460d0"
-              />
-            </div>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Welcome!
-            </h1>
-            <p className="mt-4 text-xl text-gray-500">
-              This is a boilerplate build with Vite, React 18, TypeScript,
-              Vitest, Testing Library, TailwindCSS 3, Eslint and Prettier.
-            </p>
-          </div>
-          <div>
-            <div className="my-10">
-              <a
-                href="vscode://"
-                className="inline-block rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-center font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2"
-              >
-                Start building for free
-              </a>
-              <div
-                aria-hidden="true"
-                className="pointer-events-none mt-10 md:mt-0 lg:absolute lg:inset-y-0 lg:mx-auto lg:w-full lg:max-w-7xl"
-              >
-                <div className="absolute sm:left-1/2 sm:top-0 sm:translate-x-8 lg:left-1/2 lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-8">
-                  <div className="flex items-center space-x-6 lg:space-x-8">
-                    <div className="grid shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
-                      <div className="h-64 w-44 overflow-hidden rounded-lg sm:opacity-0 lg:opacity-100">
-                        <img
-                          src="https://picsum.photos/600?random=1"
-                          alt=""
-                          className="h-full w-full bg-indigo-100 object-cover object-center"
-                        />
-                      </div>
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
-                          src="https://picsum.photos/600?random=2"
-                          alt=""
-                          className="h-full w-full bg-indigo-100 object-cover object-center"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
-                          src="https://picsum.photos/600?random=3"
-                          alt=""
-                          className="h-full w-full bg-indigo-100 object-cover object-center"
-                        />
-                      </div>
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
-                          src="https://picsum.photos/600?random=4"
-                          alt=""
-                          className="h-full w-full bg-indigo-100 object-cover object-center"
-                        />
-                      </div>
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
-                          src="https://picsum.photos/600?random=5"
-                          alt=""
-                          className="h-full w-full bg-indigo-100 object-cover object-center"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid shrink-0 grid-cols-1 gap-y-6 lg:gap-y-8">
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
-                          src="https://picsum.photos/600?random=6"
-                          alt=""
-                          className="h-full w-full bg-indigo-100 object-cover object-center"
-                        />
-                      </div>
-                      <div className="h-64 w-44 overflow-hidden rounded-lg">
-                        <img
-                          src="https://picsum.photos/600?random=7"
-                          alt=""
-                          className="h-full w-full bg-indigo-100 object-cover object-center"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <ConfigProvider
+      theme={{
+        token: {},
+        algorithm: theme === 'dark' ? darkAlgorithm : defaultAlgorithm
+      }}
+    >
+      <div className="relative h-screen w-screen overflow-hidden">
+        <nav className="nav-header flex h-[var(--navbar-h)] w-full items-center bg-light-0 px-4 dark:bg-dark-0 md:px-24 lg:px-48">
+          <button
+            onClick={() => {
+              navigate('/')
+            }}
+            className="whitespace-nowrap rounded bg-transparent px-4 py-2 text-sm text-dark-10 transition-colors duration-150 hover:bg-dark-4"
+          >
+            <RollbackOutlined className="text-xl text-dark-0 dark:text-light-0" />
+          </button>
+          <Switch
+            checked={theme === 'dark'}
+            unCheckedChildren={'☀️'}
+            checkedChildren={'🌙'}
+            onChange={() => toggleTheme()}
+          />
+
+          <h4 className="absolute left-1/2 -translate-x-1/2 text-[26px] font-semibold dark:text-dark-10">
+            ChatPDF
+          </h4>
+        </nav>
+        <main
+          className="relative flex w-full overflow-hidden"
+          style={{
+            height: 'calc(100vh - var(--navbar-h))'
+          }}
+        >
+          {/* {!isHome && (
+            <div className="sidebar h-full w-[250px] bg-slate-400"></div>
+          )} */}
+
+          {/* <div className="relative h-full w-full overflow-y-scroll px-10 py-4 xl:px-60"> */}
+          <Outlet />
+          {/* </div> */}
+        </main>
       </div>
-    </div>
+    </ConfigProvider>
   )
 }
 
 export default App
+
+const initApp = async () => {
+  const ssoType = SSOLoginPlatformType.Vms
+  await generateAuthBySSOTzCode(ssoType)
+  // await initGlobalUserId();
+  // 499 => redirect
+}

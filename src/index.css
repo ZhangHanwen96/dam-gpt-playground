@@ -1,0 +1,9 @@
+:root {
+  --navbar-h: 72px;
+}
+
+div,
+main,
+nav {
+  transition: color 0.45s ease, background-color 0.45s ease;
+}

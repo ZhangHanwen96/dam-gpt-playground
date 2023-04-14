@@ -1,0 +1,63 @@
+#searchBar {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.ant-btn > span {
+  display: inline-flex;
+}
+
+.app-name {
+  line-height: 3em;
+  padding: 0 24px;
+  color: #333;
+  font-weight: bold;
+  height: 3em;
+  border-radius: 30em;
+  font-size: 15px;
+  font-family: inherit;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+}
+
+.app-name::before {
+  content: '';
+  width: 100%;
+  height: 3em;
+  border-radius: 30em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(to right, #0fd850 0%, #f9f047 100%);
+  transition: 0.3s ease;
+  display: block;
+  z-index: -1;
+}
+
+.conversation-list p {
+  margin: 0;
+}
+
+.ant-modal-confirm-title + .ant-modal-confirm-content {
+  max-width: none;
+}
+
+.perspective {
+  perspective: 100px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.distance-1 {
+  transform: translateZ(-100px) scale(2);
+}
+
+.distance-2 {
+  transform: translateZ(-50px) scale(1.5);
+}
