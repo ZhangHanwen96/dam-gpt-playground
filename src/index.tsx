@@ -4,19 +4,19 @@ import {
   Outlet,
   RouteObject,
   RouterProvider,
-  useLocation,
-  useOutlet
+  useLocation
 } from 'react-router-dom'
-import 'tailwindcss/tailwind.css'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
+import { Button, Result } from 'antd'
+
 import App from '@/components/App'
 import ErrorPage from '@/pages/ErrorPage'
 import PlaygroudApp from '@/pages/PlaygroundApp'
 import Home from '@/pages/Home'
-import { TransitionGroup, CSSTransition } from 'react-transition-group'
-import ChatPDF from './components/playground-apps/ChatPDF'
+
 import './preflight.css'
+import 'tailwindcss/tailwind.css'
 import './index.css'
-import { Button, Result } from 'antd'
 
 const container = document.getElementById('root') as HTMLDivElement
 const root = createRoot(container)
@@ -26,7 +26,7 @@ const routes: RouteObject[] = [
     path: '/',
     errorElement: <ErrorPage />,
 
-    Component: () => {
+    Component: function PageTransition() {
       // const currentOutlet = useOutlet()
       const location = useLocation()
       // const { nodeRef } = routes.find((route) => route.path === location.pathname) ?? {}
@@ -38,6 +38,12 @@ const routes: RouteObject[] = [
             unmountOnExit
             classNames="page"
             timeout={300}
+            onEnter={() => {
+              document.body.classList.add('page-transition-active')
+            }}
+            onExited={() => {
+              document.body.classList.remove('page-transition-active')
+            }}
           >
             <Outlet />
           </CSSTransition>

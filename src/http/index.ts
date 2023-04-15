@@ -5,14 +5,10 @@ import { message } from 'antd'
 import constants from './costants'
 import redirectToPageLogin from './redirectToLogin'
 
-// 添加一些项目的请求头
-// 但我不懂为啥要将cookie的值在放到请求头里
-// 后台可以直接从cookie拿呀
 const token = cookies.get('x-token')
 const userId = cookies.get('x-user-id')
 const tenantId = cookies.get('X-TENANT-ID')
 
-// 默认axios配置
 const axiosDefaultConfig = {
   timeout: 600000,
   withCredentials: true,
@@ -21,11 +17,10 @@ const axiosDefaultConfig = {
     'x-tenant-id': tenantId,
     [constants['X_TOKEN']]: token,
     [constants.X_USER_ID]: userId,
-    [constants.X_LANG]: 'zh-CN'
+    [constants.X_LANG]: cookies.get(constants.X_LANG) || 'zh-CN'
   }
 }
 
-// 初始化http配置
 const initConfig = () => {
   const httpConfig = {
     axios: {
@@ -47,6 +42,7 @@ const initConfig = () => {
 const isPublicPage = (href: string) => {
   const homepage = /\/playground$/.test(href)
 
+  // TODO: 优化
   return true || homepage
 }
 

@@ -4,9 +4,9 @@ import ChatWindow from '@/pages/PlaygroundApp/ChatWindow'
 import { UploadOutlined } from '@ant-design/icons'
 import { Button, Modal, Select, Space, Tour, TourProps, theme } from 'antd'
 import { useFileStore } from '@/store/useFileStore'
-import FileDropZone from '../../Upload'
+import FileDropZone from '../../upload'
 import { useLocalStorageState } from 'ahooks'
-import { useMaterialSelector } from '@/components/useMaterialSelector'
+import { useMaterialSelector } from '@/hooks/useMaterialSelector'
 import showModal from '@/components/show-modal'
 
 const ensureArrary = (value: any) => {
