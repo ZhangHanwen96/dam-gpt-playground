@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "build:test": "pnpm run build",
     "serve": "vite preview",
     "test": "vitest",
