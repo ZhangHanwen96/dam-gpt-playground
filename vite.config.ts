@@ -7,7 +7,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 export default defineConfig({
   plugins: [
     react(),
-    tsconfigPaths(),
+    // tsconfigPaths(),
     AutoImport({
       include: [
         /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
@@ -18,11 +18,16 @@ export default defineConfig({
       imports: ['ahooks', 'react-router-dom', 'react']
     })
   ],
-  test: {
-    globals: true,
-    environment: 'happy-dom',
-    setupFiles: '.vitest/setup',
-    include: ['**/test.{ts,tsx}']
-  },
-  base: '/playground/'
+  // test: {
+  //   globals: true,
+  //   environment: 'happy-dom',
+  //   setupFiles: '.vitest/setup',
+  //   include: ['**/test.{ts,tsx}']
+  // },
+  base: '/playground/',
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
+  }
 })
