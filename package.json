@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build:test": "echo 'build test'",
+    "build:test": "pnpm run build",
     "serve": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
