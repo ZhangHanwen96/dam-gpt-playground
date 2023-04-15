@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ConfigProvider, Switch, theme } from 'antd'
 import { RollbackOutlined, LeftOutlined } from '@ant-design/icons'
-import { useLocation, Outlet, useNavigate } from 'react-router-dom'
+import { useLocation, Outlet, useNavigate, useParams } from 'react-router-dom'
 import 'antd/dist/reset.css'
 import Home from 'pages/Home'
 import useTheme from '@/hooks/useTheme'
@@ -9,14 +10,16 @@ import {
   generateAuthBySSOTzCode,
   SSOLoginPlatformType
 } from '@tezign/foundation-common/lib/utils/auth'
+import ThemeButton from './ThemeButton'
 
 const { darkAlgorithm, defaultAlgorithm } = theme
 
 function App() {
-  const location = useLocation()
+  const { type } = useParams<{ type: string }>()
   const navigate = useNavigate()
 
   const { toggleTheme, theme } = useTheme()
+  console.log(theme)
 
   return (
     <ConfigProvider
@@ -31,7 +34,7 @@ function App() {
             onClick={() => {
               navigate('/')
             }}
-            className="whitespace-nowrap rounded bg-transparent px-4 py-2 text-sm text-dark-10 transition-colors duration-150 hover:bg-dark-4"
+            className="whitespace-nowrap rounded bg-transparent px-4 py-2 text-sm text-dark-10 transition-colors duration-150 hover:bg-light-4 dark:hover:bg-dark-4"
           >
             <RollbackOutlined className="text-xl text-dark-0 dark:text-light-0" />
           </button>
@@ -39,11 +42,13 @@ function App() {
             checked={theme === 'dark'}
             unCheckedChildren={'☀️'}
             checkedChildren={'🌙'}
+            // @ts-ignore
             onChange={() => toggleTheme()}
+            className="ml-auto"
           />
 
           <h4 className="absolute left-1/2 -translate-x-1/2 text-[26px] font-semibold dark:text-dark-10">
-            ChatPDF
+            {type}
           </h4>
         </nav>
         <main

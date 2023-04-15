@@ -32,12 +32,6 @@ import MdChatMessage from './components/MDChatMessage'
 
 const { TextArea } = Input
 
-const markdown = `Here is some JavaScript code:
-\`\`\`js
-console.log('It works!')
-\`\`\`
-`
-
 const { defaultAlgorithm } = theme
 
 const testMessages = [
@@ -60,6 +54,8 @@ const testMessages = [
       '抱歉，这个问题无法回答，因为它不符合上下文的历史对话。请提供更具体的问题，以便我可以为您提供更好的帮助。'
   }
 ]
+
+let rafId: number
 
 interface ChatWindowProps {
   searchBarTopArea?: React.ReactNode
@@ -89,7 +85,16 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
 
   useEffect(() => {
     if (chatRoomRef.current) {
-      chatRoomRef.current.scrollTop = chatRoomRef.current.scrollHeight
+      rafId && cancelAnimationFrame(rafId)
+      if (
+        chatRoomRef.current.scrollTop + chatRoomRef.current.clientHeight + 10 <
+        chatRoomRef.current.scrollHeight
+      ) {
+        return
+      }
+      rafId = requestAnimationFrame(() => {
+        chatRoomRef.current!.scrollTop = chatRoomRef.current!.scrollHeight + 30
+      })
     }
   }, [chatRoomRef.current, pending, messages])
 
@@ -308,7 +313,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
             ></Button>
           </ConfigProvider>
 
-          <div className="absolute left-0 top-full mt-1">
+          <div className="absolute left-0 top-full mt-1 w-full">
             {searchBarTopArea}
           </div>
 

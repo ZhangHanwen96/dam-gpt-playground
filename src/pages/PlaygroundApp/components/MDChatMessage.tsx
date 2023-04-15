@@ -109,9 +109,7 @@ const MdChatMessage: React.FC<{
                     PreTag="div"
                     className={`${className}`}
                   >
-                    {String(children)
-                      .replaceAll('```', '~~~')
-                      .replace(/\n$/, '')}
+                    {String(children).replace(/\n$/, '')}
                   </SyntaxHighlighter>
                 </div>
               ) : (

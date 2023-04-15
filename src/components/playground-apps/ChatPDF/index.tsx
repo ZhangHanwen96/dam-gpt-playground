@@ -6,6 +6,7 @@ import { Button, Modal, Select, Space, Tour, TourProps, theme } from 'antd'
 import { usePDFStore } from '@/store/usePDFStore'
 import FileDropZone from '../../Upload'
 import { useLocalStorageState } from 'ahooks'
+import { useMaterialSelector } from '@/components/useMaterialSelector'
 
 const ensureArrary = (value: any) => {
   if (Array.isArray(value)) {
@@ -18,6 +19,12 @@ const SearchBarAreaPDF: FC = () => {
   const pdfOptions = usePDFStore.use.pdfOptions()
   const fetchPDFOptions = usePDFStore.use.fetchFileOptions()
   const setSelectedFile = usePDFStore.use.setSelectedFile()
+  const { showMaterialSelector } = useMaterialSelector({
+    filterCode: '',
+    onOk(data) {
+      console.log(data)
+    }
+  })
 
   const showUploadModal = () => {
     Modal.info({
@@ -36,7 +43,10 @@ const SearchBarAreaPDF: FC = () => {
     })
   }
   return (
-    <Space>
+    <Space className="w-full [&>div:nth-child(3)]:w-full">
+      <Button onClick={showMaterialSelector} type="primary">
+        素材选择器
+      </Button>
       <Button
         icon={<UploadOutlined />}
         type="primary"
@@ -49,7 +59,7 @@ const SearchBarAreaPDF: FC = () => {
       </Button>
       <Select
         defaultValue="lucy"
-        className="min-w-[8rem] lg:min-w-[16rem]"
+        className="w-full xl:w-2/3"
         onChange={(values, opt) => {
           console.log(values, opt)
           // @ts-ignore

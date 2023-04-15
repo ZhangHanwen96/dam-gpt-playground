@@ -15,7 +15,7 @@ const Home = () => {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="nav fixed inset-x-0 top-0 z-50 flex h-[96px] items-center md:px-32 xl:px-52">
+      <div className="nav fixed inset-x-0 top-0 z-50 flex h-[96px] items-center px-6 md:px-32 xl:px-52">
         <div className="flex flex-row items-center gap-2">
           <span
             className="flex items-center align-middle"
@@ -108,10 +108,12 @@ const Home = () => {
         className="home-intro relative flex w-full justify-center overflow-y-auto scroll-smooth py-4 backdrop-blur-sm"
       >
         <div
-          className="playground-list absolute inset-x-0 md:px-32 md:py-4 xl:px-52 xl:py-6"
-          style={{
-            top: 'calc(96px + 80px)'
-          }}
+          className="playground-list absolute  inset-x-0 top-[calc(var(--navbar-h)+30px)] px-6 md:top-[calc(var(--navbar-h)+80px)] md:px-32 md:py-4 xl:px-52 xl:py-6"
+          style={
+            {
+              // top: 'calc(96px + 80px)'
+            }
+          }
         >
           <Playground />
         </div>
