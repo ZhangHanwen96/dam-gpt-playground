@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { persist } from 'zustand/middleware'
@@ -14,9 +15,11 @@ type Actions = {
   setSelectedFile: (opt: { value: string; label: string }[]) => void
 }
 
+// @ts-ignore
 const createFileSlice = (set) => ({
   selectedFile: undefined,
   setSelectedFile: (opt: { value: string; label: string }[]) => {
+    // @ts-ignore
     set((state) => {
       state.selectedPDF = opt
     })

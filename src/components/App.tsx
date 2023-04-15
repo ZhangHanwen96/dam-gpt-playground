@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ConfigProvider, Switch, theme } from 'antd'
 import { RollbackOutlined, LeftOutlined } from '@ant-design/icons'
-import { useLocation, Outlet, useNavigate, useParams } from 'react-router-dom'
+import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import 'antd/dist/reset.css'
-import Home from 'pages/Home'
 import useTheme from '@/hooks/useTheme'
 import './App.css'
 import {
   generateAuthBySSOTzCode,
   SSOLoginPlatformType
 } from '@tezign/foundation-common/lib/utils/auth'
-import ThemeButton from './ThemeButton'
 
 const { darkAlgorithm, defaultAlgorithm } = theme
 

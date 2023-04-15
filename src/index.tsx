@@ -50,7 +50,7 @@ const routes: RouteObject[] = [
         element: <Home />
       },
       {
-        path: 'playground',
+        path: 'apps',
         element: <App />,
         errorElement: <ErrorPage />,
         children: [
@@ -78,7 +78,7 @@ const routes: RouteObject[] = [
 ]
 
 const router = createBrowserRouter(routes, {
-  basename: import.meta.PROD ? '/playground' : ''
+  basename: '/playground/'
 })
 
 root.render(<RouterProvider router={router} />)
