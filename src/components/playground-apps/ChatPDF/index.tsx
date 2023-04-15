@@ -3,10 +3,11 @@ import React, { FC } from 'react'
 import ChatWindow from '@/pages/PlaygroundApp/ChatWindow'
 import { UploadOutlined } from '@ant-design/icons'
 import { Button, Modal, Select, Space, Tour, TourProps, theme } from 'antd'
-import { usePDFStore } from '@/store/usePDFStore'
+import { useFileStore } from '@/store/useFileStore'
 import FileDropZone from '../../Upload'
 import { useLocalStorageState } from 'ahooks'
 import { useMaterialSelector } from '@/components/useMaterialSelector'
+import showModal from '@/components/show-modal'
 
 const ensureArrary = (value: any) => {
   if (Array.isArray(value)) {
@@ -16,32 +17,36 @@ const ensureArrary = (value: any) => {
 }
 
 const SearchBarAreaPDF: FC = () => {
-  const pdfOptions = usePDFStore.use.pdfOptions()
-  const fetchPDFOptions = usePDFStore.use.fetchFileOptions()
-  const setSelectedFile = usePDFStore.use.setSelectedFile()
+  const fileOptions = useFileStore.use.fileOptions()
+  const fetchfileOptions = useFileStore.use.fetchFileOptions()
+  const setselectedFiles = useFileStore.use.setselectedFiles()
   const { showMaterialSelector } = useMaterialSelector({
-    filterCode: '',
+    filterCode: 'open-component-search-002',
     onOk(data) {
       console.log(data)
     }
   })
 
   const showUploadModal = () => {
-    Modal.info({
+    const modal = showModal({
       title: '上传文件',
-      content: (
+      children: (
         <div className="flex flex-col items-center">
           <FileDropZone />
           <div className="mt-2 text-sm text-gray-500">上传PDF文件</div>
         </div>
       ),
       afterClose() {
-        fetchPDFOptions('pdf')
+        fetchfileOptions('pdf')
       },
-      icon: null,
-      closable: true
+      closable: true,
+      onOk(e) {
+        modal.destroy()
+        // fetchfileOptions('pdf')
+      }
     })
   }
+
   return (
     <Space className="w-full [&>div:nth-child(3)]:w-full">
       <Button onClick={showMaterialSelector} type="primary">
@@ -63,10 +68,10 @@ const SearchBarAreaPDF: FC = () => {
         onChange={(values, opt) => {
           console.log(values, opt)
           // @ts-ignore
-          setSelectedFile(ensureArrary(values))
+          setselectedFiles(ensureArrary(values))
         }}
-        options={pdfOptions}
-        loading={usePDFStore.use.loading()}
+        options={fileOptions}
+        loading={useFileStore.use.loading()}
         allowClear
         showSearch
         maxTagCount={'responsive'}

@@ -23,19 +23,19 @@ const cardListData: PCardProps[] = [
     title: 'Chat PDF',
     category: 'leibie1',
     description: 'This is the description',
-    to: '/playground/chatPDF'
+    to: '/apps/chatPDF'
   },
   {
     title: 'Chat PDF',
     category: 'leibie1',
     description: 'This is the description',
-    to: '/playground/chatPDF'
+    to: '/apps/chatPDF'
   },
   {
     title: 'Chat PDF',
     category: 'leibie1',
     description: 'This is the description',
-    to: '/playground/chatPDF'
+    to: '/apps/chatPDF'
   }
 ]
 

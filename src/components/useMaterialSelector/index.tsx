@@ -26,8 +26,8 @@ function useMaterialSelector(props: {
             data: {
               config: [{ id: 'document', limit: 3 }],
               filterCode: props.filterCode,
-              id: idRef.current
-              // formatLimit: 5
+              id: idRef.current,
+              formatLimit: 3
             }
           },
           {

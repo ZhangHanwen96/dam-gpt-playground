@@ -27,15 +27,14 @@ const useTheme = () => {
       darkModeOff()
       setTheme('light')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const toggleTheme = useMemoizedFn((type?: 'light' | 'dark') => {
-    const c = type || (theme === 'dark' ? 'light' : 'dark')
-    console.log(c)
     setTheme(type || (theme === 'dark' ? 'light' : 'dark'))
     document.documentElement.classList.contains('dark')
-      ? document.documentElement.classList.remove('dark')
-      : document.documentElement.classList.add('dark')
+      ? darkModeOff()
+      : darkModeOn()
   })
 
   return {

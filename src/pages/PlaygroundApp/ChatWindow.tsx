@@ -1,32 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  Input,
-  Avatar,
-  Button,
-  Collapse,
-  theme,
-  Select,
-  Space,
-  Modal,
-  ConfigProvider
-} from 'antd'
+import { Input, Button, Collapse, theme, ConfigProvider } from 'antd'
 import {
   SendOutlined,
-  UserOutlined,
   CaretRightOutlined,
-  ReloadOutlined,
-  UploadOutlined
+  ReloadOutlined
 } from '@ant-design/icons'
 import clx from 'classnames'
-import ReactMd from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styles from './index.module.scss'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
-import FileDropZone from '@/components/Upload'
 import { ChatMessage } from '@/interface/ChatMessage'
-import { usePDFStore } from '../../store/usePDFStore'
+import { useFileStore } from '../../store/useFileStore'
 import MdChatMessage from './components/MDChatMessage'
 // import useMaterialSelector from 'components/MaterialSelector'
 
@@ -80,8 +64,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
 
   const { history, messages, pending } = messageState
 
-  const selectedFile = usePDFStore.use.selectedFile?.()
-  const pdfOptions = usePDFStore.use.pdfOptions()
+  const selectedFiles = useFileStore.use.selectedFiles?.()
+  const fileOptions = useFileStore.use.fileOptions()
 
   useEffect(() => {
     if (chatRoomRef.current) {
@@ -141,7 +125,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
       body: JSON.stringify({
         query: question,
         history,
-        fileIDs: selectedFile?.map((v) => v.value)
+        fileIDs: selectedFiles?.map((v) => v.value)
       }),
       signal: abortCtrl.signal,
       onclose() {
@@ -371,7 +355,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
         </div>
       </div>
 
-      {!pdfOptions && (
+      {!fileOptions && (
         <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
           <svg
             width="112"
