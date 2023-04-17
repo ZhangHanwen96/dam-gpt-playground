@@ -93,15 +93,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
       {
         role: 'assistant',
         content: '您好，请问有什么可以帮助你的吗? 😀'
-      },
-      {
-        role: 'user',
-        content: 'hello'
-      },
-      {
-        role: 'assistant',
-        content: '你好！有什么问题我可以帮您解答吗？',
-        sourceDocs: []
       }
     ]
   })
