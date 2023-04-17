@@ -18,7 +18,8 @@
     "useDefineForClassFields": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["unplugin-icons/types/react"]
   },
   "include": ["src", "auto-imports.d.ts"],
   "exclude": ["node_modules"]

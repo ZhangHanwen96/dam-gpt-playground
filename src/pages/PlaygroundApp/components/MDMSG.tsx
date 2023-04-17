@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react'
-import { Avatar, Button } from 'antd'
-import { CopyOutlined, UserOutlined } from '@ant-design/icons'
+import { Avatar } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
+import rehypeHighlight from 'rehype-highlight'
+import rehypeRaw from 'rehype-raw'
+import remarkGfm from 'remark-gfm'
+import remarkBreaks from 'remark-breaks'
 import clx from 'classnames'
 import ReactMd from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styles from '../index.module.scss'
 import { ChatMessage } from '@/interface/ChatMessage'
-import CopyButton from '@/components/copy-button'
+import { Pre } from './Pre'
 
 const AssistantAvatar = () => (
   <svg
@@ -49,6 +53,33 @@ const AssistantAvatar = () => (
   </svg>
 )
 
+const linkProperties = {
+  target: '_blank',
+  style: 'color: #8ab4f8;',
+  rel: 'nofollow noopener noreferrer'
+}
+
+const content = `
+show me how to use react \`useEffect\`
+
+~~~typescript
+function MyComponent() {
+    const [count, setCount] = useState(0);
+  
+    useEffect(() => {
+      // Code to count how many times the button is clicked
+      // ...
+    }, [count]);
+  
+    return (
+      <p>
+        You clicked the button {count} times.
+      </p>
+    );
+}
+~~~
+`
+
 const MdChatMessage: React.FC<{
   message: ChatMessage
   className?: string
@@ -74,45 +105,31 @@ const MdChatMessage: React.FC<{
           userRole
             ? 'text-light-10 bg-light-4 dark:text-dark-10 dark:bg-dark-4'
             : 'bg-light-10 dark:bg-dark-10 text-light-0 dark:text-dark-0',
-          'px-5 py-2',
-          'markdown-body',
+          'px-5 py-2'
         ])}
+        style={{}}
       >
         <ReactMd
+          remarkPlugins={[remarkGfm, remarkBreaks]}
+          rehypePlugins={[
+            rehypeRaw,
+            [
+              rehypeHighlight,
+              {
+                detect: true,
+                ignoreMissing: true
+              }
+            ]
+          ]}
           components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || '')
-              return !inline && match ? (
-                <div className="markdown-code-block">
-                  <div className="-mb-2 w-full rounded-t-md bg-[rgb(116,109,109)] py-2 text-white">
-                    {' '}
-                    <span>{match[1]}</span>
-                    <CopyButton />
-                  </div>
-                  <SyntaxHighlighter
-                    {...props}
-                    style={materialLight}
-                    language={match[1]}
-                    PreTag="div"
-                    className={`${className}`}
-                  >
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                </div>
-              ) : (
-                // <div className="markdown-code-block">
-                //   <div className="w-full rounded-t-md bg-[rgb(116,109,109)] py-2 text-white">
-                //     {'  '}
-                //   </div>
-                //   <div className="overflow-auto">
-                    <code {...props} className={clx([className, 'inline-code-block'])}>
-                      {children}
-                    </code>
-                  // </div>
-                // </div>
-              )
-            }
+            a: (props) => (
+              <a href={props.href} {...linkProperties}>
+                {props.children}
+              </a>
+            ),
+            pre: Pre
           }}
+          //   {...props}
         >
           {message.content}
         </ReactMd>

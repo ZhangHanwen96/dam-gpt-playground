@@ -1,3 +1,6 @@
+// @import 'highlight.js/scss/github.scss';
+// @import 'github-markdown-css/github-markdown-light.css';
+
 :root {
   --navbar-h: 72px;
 }
@@ -32,4 +35,14 @@ nav {
 
 body.page-transition-active {
   background-color: theme('colors.dark.0');
+}
+
+// markdown
+@tailwind components;
+@layer components {
+  .markdown-body {
+    code {
+      @apply px-1 py-0.5 text-white bg-dark-4 rounded-sm;
+    }
+  }
 }

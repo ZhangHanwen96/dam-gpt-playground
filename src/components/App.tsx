@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { ConfigProvider, Switch, theme } from 'antd'
+import { Button, ConfigProvider, Spin, Switch, theme } from 'antd'
 import { RollbackOutlined, LeftOutlined } from '@ant-design/icons'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import 'antd/dist/reset.css'
@@ -7,8 +7,15 @@ import useTheme from '@/hooks/useTheme'
 import './App.css'
 import {
   generateAuthBySSOTzCode,
-  SSOLoginPlatformType
+  SSOLoginPlatformType,
+  hasSSOLogin
 } from '@tezign/foundation-common/lib/utils/auth'
+import IconMdiSunny from '~icons/mdi/white-balance-sunny'
+import IconMdiMoon from '~icons/mdi/moon-waning-crescent'
+import { FC } from 'react'
+import redirectToPageLogin from '@/http/redirectToLogin'
+import http from '@/http'
+import axios from 'axios'
 
 const { darkAlgorithm, defaultAlgorithm } = theme
 
@@ -36,17 +43,33 @@ function App() {
           >
             <RollbackOutlined className="text-xl text-dark-0 dark:text-light-0" />
           </button>
-          <Switch
+          {/* <Switch
             checked={theme === 'dark'}
             unCheckedChildren={'☀️'}
             checkedChildren={'🌙'}
             // @ts-ignore
             onChange={() => toggleTheme()}
             className="ml-auto"
+          /> */}
+          <Button
+            className="ml-auto text-lg"
+            shape="circle"
+            icon={
+              theme === 'dark' ? (
+                <IconMdiSunny className="m-auto text-dark-0 dark:text-light-0" />
+              ) : (
+                <IconMdiMoon className="m-auto -rotate-45 text-dark-0 dark:text-light-0" />
+              )
+            }
+            ghost
+            onClick={() => toggleTheme()}
           />
+
+          {/* <IconMdiMoon /> */}
 
           <h4 className="absolute left-1/2 -translate-x-1/2 text-[26px] font-semibold dark:text-dark-10">
             {type}
+            {/* <IconCarbonApps /> */}
           </h4>
         </nav>
         <main
@@ -70,9 +93,29 @@ function App() {
 
 export default App
 
-const initApp = async () => {
-  const ssoType = SSOLoginPlatformType.Vms
-  await generateAuthBySSOTzCode(ssoType)
-  // await initGlobalUserId();
-  // 499 => redirect
+export const AuthProvider: FC<{ children: any }> = ({ children }) => {
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    // http.get('https://dummyjson.com/products/1')
+    generateAuthBySSOTzCode(SSOLoginPlatformType.Vms)
+      .then((ssoInfo) => {
+        console.log(ssoInfo, 'ssoInfo')
+        console.log(hasSSOLogin(SSOLoginPlatformType.Vms))
+        if (!ssoInfo) {
+          redirectToPageLogin()
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [])
+
+  return loading ? (
+    <div className="m-auto flex h-screen w-full bg-dark-2 text-center">
+      <Spin size="large" spinning={loading} />
+    </div>
+  ) : (
+    children
+  )
 }

@@ -2,6 +2,9 @@ import axios, { AxiosResponse } from 'axios'
 import { cacheAdapterEnhancer, retryAdapterEnhancer } from 'axios-extensions'
 import cookies from 'js-cookie'
 import { message } from 'antd'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import xhrAdapter from 'axios/lib/adapters/xhr'
 import constants from './costants'
 import redirectToPageLogin from './redirectToLogin'
 
@@ -17,26 +20,20 @@ const axiosDefaultConfig = {
     'x-tenant-id': tenantId,
     [constants['X_TOKEN']]: token,
     [constants.X_USER_ID]: userId,
-    [constants.X_LANG]: cookies.get(constants.X_LANG) || 'zh-CN'
+    [constants.X_LANG]: cookies.get(constants.X_LANG) || 'zh-CN',
   }
 }
 
 const initConfig = () => {
   const httpConfig = {
-    axios: {
-      ...axiosDefaultConfig,
-      ...axios,
-      headers: {
-        ...axiosDefaultConfig.headers
-      }
-    }
+    axios: axiosDefaultConfig
   }
   // 初始化环境变量
   // 生产环境去除字段
-  if (process.env.NODE_ENV === 'production') {
+  if (import.meta.env.PROD) {
     delete httpConfig.axios.headers['x-tenant-id']
   }
-  return httpConfig
+  return httpConfig.axios
 }
 
 const isPublicPage = (href: string) => {
@@ -47,15 +44,13 @@ const isPublicPage = (href: string) => {
 }
 
 const createAxiosInstance = () => {
+  console.log(initConfig())
   // 生成请求实例
   const instance = axios.create({
     baseURL: constants.API_ORIGIN,
-    timeout: 600000,
     ...initConfig(),
     adapter: retryAdapterEnhancer(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      cacheAdapterEnhancer(axios.defaults.adapter, {
+      cacheAdapterEnhancer(xhrAdapter, {
         enabledByDefault: false
       }),
       {
@@ -64,23 +59,29 @@ const createAxiosInstance = () => {
     )
   })
 
-  instance.interceptors.response.use(null, (err) => {
-    const { response } = err
-    const { status } = response as AxiosResponse
-    // 499重定向
-    if (status === 499) {
-      if (!isPublicPage(window.location.href)) {
-        cookies.remove(constants.COOKIE_X_TOKEN)
-        cookies.remove(constants.COOKIE_X_USER_ID)
-        cookies.remove(constants.C_XTENANTID)
-        redirectToPageLogin()
+  instance.interceptors.response.use(
+    (res) => res,
+    (err) => {
+      const { response } = err
+      if (!response) {
+        return
       }
-    } else {
-      message.error(response.errorMessage)
+      const { status } = response as AxiosResponse
+      // 499重定向
+      if (status === 499) {
+        if (!isPublicPage(window.location.href)) {
+          cookies.remove(constants.COOKIE_X_TOKEN)
+          cookies.remove(constants.COOKIE_X_USER_ID)
+          cookies.remove(constants.C_XTENANTID)
+          redirectToPageLogin()
+        }
+      } else {
+        message.error(response.errorMessage)
+      }
+      // return data.result || {};
+      throw response
     }
-    // return data.result || {};
-    throw response
-  })
+  )
 
   return instance
 }

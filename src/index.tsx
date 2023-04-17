@@ -9,14 +9,14 @@ import {
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { Button, Result } from 'antd'
 
-import App from '@/components/App'
+import App, { AuthProvider } from '@/components/App'
 import ErrorPage from '@/pages/ErrorPage'
-import PlaygroudApp from '@/pages/PlaygroundApp'
+// import PlaygroudApp from '@/pages/PlaygroundApp'
 import Home from '@/pages/Home'
 
 import './preflight.css'
 import 'tailwindcss/tailwind.css'
-import './index.css'
+import './index.scss'
 
 const container = document.getElementById('root') as HTMLDivElement
 const root = createRoot(container)
@@ -25,11 +25,8 @@ const routes: RouteObject[] = [
   {
     path: '/',
     errorElement: <ErrorPage />,
-
     Component: function PageTransition() {
-      // const currentOutlet = useOutlet()
       const location = useLocation()
-      // const { nodeRef } = routes.find((route) => route.path === location.pathname) ?? {}
 
       return (
         <TransitionGroup component={null}>
@@ -57,12 +54,26 @@ const routes: RouteObject[] = [
       },
       {
         path: 'apps',
-        element: <App />,
+        element: (
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        ),
+
         errorElement: <ErrorPage />,
         children: [
           {
             path: ':type',
-            element: <PlaygroudApp />
+            // element: <PlaygroudApp />
+            lazy: async () => {
+              const { default: Component } = await import(
+                /* @vite-ignore chunkName: "NamedChunkComponent" */
+                './pages/PlaygroundApp'
+              )
+              return {
+                Component
+              }
+            }
           }
         ]
       },
@@ -84,7 +95,7 @@ const routes: RouteObject[] = [
 ]
 
 const router = createBrowserRouter(routes, {
-  basename: '/playground/'
+  basename: '/playground'
 })
 
 root.render(<RouterProvider router={router} />)

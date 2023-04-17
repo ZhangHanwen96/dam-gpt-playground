@@ -1,4 +1,5 @@
 import _tenantConfig from '@tezign/tenant-config'
+
 const constants = {
   API_ORIGIN: _tenantConfig.value('API_ORIGIN'),
   API_SOCKET: _tenantConfig.value('API_SOCKET'),

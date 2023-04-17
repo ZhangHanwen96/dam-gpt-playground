@@ -1,8 +1,3 @@
-/**
- * tezign ownership
- * @owner xuchengjian
- * @team M3
- */
 import http from '.'
 
 export interface ITenant {
@@ -31,14 +26,6 @@ export interface ITenant {
   logo: string
 }
 
-export interface ISlot {
-  config: {
-    [key: string]: {
-      component: string
-    }
-  }
-}
-
 export async function fetchTenantInfo() {
   return (
     await http.get<{ result: ITenant }>('/user/public/baseinfo/get', {
@@ -47,14 +34,4 @@ export async function fetchTenantInfo() {
       }
     })
   ).data.result
-}
-
-/**
- * 获取插槽配置
- * @param params
- * @returns boolean
- */
-export async function getSlotList() {
-  return (await http.get<{ result: ISlot }>('/user/tenantConfig/switch/list'))
-    .data.result
 }

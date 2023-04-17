@@ -20,22 +20,22 @@ type PCardProps = {
 
 const cardListData: PCardProps[] = [
   {
-    title: 'Chat PDF',
-    category: 'leibie1',
+    title: 'Chat Asset',
+    category: 'C2',
     description: 'This is the description',
-    to: '/apps/chatPDF'
+    to: '/apps/chatAsset'
   },
   {
-    title: 'Chat PDF',
-    category: 'leibie1',
+    title: 'Chat Prompt',
+    category: 'C1',
     description: 'This is the description',
-    to: '/apps/chatPDF'
+    to: '/apps/chatPrompt'
   },
   {
-    title: 'Chat PDF',
-    category: 'leibie1',
+    title: 'Chat Search',
+    category: 'C1',
     description: 'This is the description',
-    to: '/apps/chatPDF'
+    to: '/apps/chatSearch'
   }
 ]
 
@@ -75,7 +75,6 @@ const PCard: FC<PCardProps> = ({ category, description, title, to }) => {
 }
 
 const Playground = () => {
-  const navigate = useNavigate()
   return (
     <Row gutter={[32, 24]}>
       {cardListData.map((val, index) => {
