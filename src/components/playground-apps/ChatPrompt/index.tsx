@@ -58,7 +58,7 @@ const ChatPrompt = () => {
   return (
     <>
       <ChatWindow
-        apiEndPoint="https://service-qkv9clm1-1307467392.bj.apigw.tencentcs.com"
+        apiEndPoint="https://service-qkv9clm1-1307467392.bj.apigw.tencentcs.com/v1/ChatAPP/ChatPrompt"
         transformPayload={(val) => {
           return {
             message: val.message,

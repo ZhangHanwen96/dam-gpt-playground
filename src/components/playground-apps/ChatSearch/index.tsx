@@ -27,7 +27,7 @@ const ChatSearch = () => {
 
   return (
     <>
-      <ChatWindow apiEndPoint="http://49.233.4.96:30209/v1/ChatAPP/ChatSearch" />
+      <ChatWindow apiEndPoint="https://service-qkv9clm1-1307467392.bj.apigw.tencentcs.com/v1/ChatAPP/ChatSearch" />
       <Tour
         type="primary"
         open={open && showGuide}

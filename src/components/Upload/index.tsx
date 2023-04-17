@@ -32,7 +32,8 @@ const FileDropZone: React.FC = () => {
     },
     accept: '.pdf',
     // action: 'https://mock.apifox.cn/m1/610743-0-default/upload',
-    action: 'http://49.233.4.96:30209/v1/ChatAPP/UploadPDF',
+    action:
+      'https://service-qkv9clm1-1307467392.bj.apigw.tencentcs.com/v1/ChatAPP/UploadPDF',
     // beforeUpload(file, fileList) {
     //   console.log(file.size, 1024 * 1024 * 20)
     //   if (file.size >= 1024 * 1024 * 20) {

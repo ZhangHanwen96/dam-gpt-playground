@@ -125,7 +125,7 @@ function ChatPDF() {
     <>
       <ChatWindow
         searchBarTopArea={<SearchBarAreaPDF />}
-        apiEndPoint="http://49.233.4.96:30209/v1/ChatAPP/ChatAsset"
+        apiEndPoint="https://service-qkv9clm1-1307467392.bj.apigw.tencentcs.com/v1/ChatAPP/ChatAsset"
         transformPayload={(val) => {
           return {
             ...val,
