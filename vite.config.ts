@@ -79,6 +79,11 @@ export default defineConfig({
   define: {
     // axios-extension
     'process.env.LOGGER_LEVEL': JSON.stringify('info')
+  },
+  alias: {
+    alias: {
+      '@': '/src'
+    }
   }
 })
 
