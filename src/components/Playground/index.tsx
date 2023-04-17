@@ -52,7 +52,7 @@ const PCard: FC<PCardProps> = ({ category, description, title, to, cover }) => {
   const navigate = useNavigate()
   return (
     <div
-      className="w-full cursor-pointer rounded-xl border border-solid border-[transparent] p-4 backdrop-blur-md transition-all duration-[280ms] ease-in-out hover:-translate-y-3 hover:border-[hsla(0,0%,100%,.5)]"
+      className="w-full cursor-pointer flex flex-col rounded-xl border border-solid h-full border-[transparent] p-4 backdrop-blur-md transition-all duration-[280ms] ease-in-out hover:-translate-y-3 hover:border-[hsla(0,0%,100%,.5)]"
       style={{
         background: 'rgba(43, 43, 46, 0.8)'
       }}
@@ -67,8 +67,10 @@ const PCard: FC<PCardProps> = ({ category, description, title, to, cover }) => {
         <img src={cover} alt="" />
       </ResponsiveBox>
       <div className="text-2xl text-white">{title}</div>
-      <div className="min-h-[2.5rem] text-sm text-[#858E99]">{description}</div>
-      <div className="mt-4 flex flex-row">
+      <div className="min-h-[2.5rem] text-sm text-[#858E99] mb-4">
+        {description}
+      </div>
+      <div className="mt-auto flex flex-row">
         <span
           className="inline-block"
           style={{

@@ -98,23 +98,23 @@ function ChatPDF() {
   const steps: TourProps['steps'] = [
     {
       description:
-        'Search related prompts from lexica.art as example, ChatGPT use example to generate new prompt.',
+        '基于私有知识库的问答工具，利用私有知识快速帮助用户回答领域内的知识。',
       title: 'Chat Asset'
     },
     {
       title: '上传文件',
-      description: '在这里上传需要交互的文件',
-      cover: (
-        <img
-          alt="tour.png"
-          src="https://user-images.githubusercontent.com/5378891/197385811-55df8480-7ff4-44bd-9d43-a7dade598d70.png"
-        />
-      ),
+      description: '在这里上传文件，目前只支持PDF文件。',
+      // cover: (
+      //   <img
+      //     alt="tour.png"
+      //     src="https://user-images.githubusercontent.com/5378891/197385811-55df8480-7ff4-44bd-9d43-a7dade598d70.png"
+      //   />
+      // ),
       target: () => document.querySelector('#uploadFiles') as HTMLDivElement
     },
     {
       title: '选择文件',
-      description: 'Click to see other actions.',
+      description: '选择需要交互的文件。',
       target: () => document.querySelector('.selectFilesRoot') as HTMLDivElement
     }
   ]

@@ -12,13 +12,12 @@ const ChatSearch = () => {
 
   const steps: TourProps['steps'] = [
     {
-      description:
-        'Search related prompts from lexica.art as example, ChatGPT use example to generate new prompt.',
+      description: 'ChatGPT用它从互联网搜索有用的文章作为参考，来回答你的问题',
       title: 'Chat Search'
     },
     {
-      title: 'Other Actions',
-      description: 'Click to see other actions.',
+      title: '提问',
+      description: '在这里输入您的问题。',
       target: () =>
         document.querySelector('#searchBarContainer') as HTMLDivElement
     }

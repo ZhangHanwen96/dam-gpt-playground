@@ -9,7 +9,12 @@ import {
 import clx from 'classnames'
 import styles from './index.module.scss'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
-import { ChatMessage, SourceDoc } from '@/interface/ChatMessage'
+import {
+  ChatMessage,
+  PDFDoc,
+  SearchDoc,
+  SourceDoc
+} from '@/interface/ChatMessage'
 import { useFileStore } from '../../store/useFileStore'
 import MdChatMessage from './components/MDChatMessage'
 import isNil from 'lodash/isNil'
@@ -48,7 +53,9 @@ type EventData =
     }
   | {
       type: 'extra_info'
-      reference_index: SourceDoc[]
+      reference_index?: SourceDoc[]
+      total_links?: { link: string; title: string; text: string }[]
+      used_links?: { link: string; title: string; text: string }[]
     }
 
 let rafId: number
@@ -91,14 +98,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
   })
   const [networkError, setNetworkError] = useState<any>()
 
+  const { type: appType } = useParams<{ type: 'chatSearch' | 'chatAsset' }>()
+
   const { history, messages, pending, pendingSourceDocs } = messageState
 
   useUpdateEffect(() => {
     console.log(messages)
   }, [messages])
-
-  const selectedFiles = useFileStore.use.selectedFiles?.()
-  const fileOptions = useFileStore.use.fileOptions()
 
   const isCompositionMode = useRef(false)
 
@@ -214,10 +220,19 @@ const ChatWindow: FC<ChatWindowProps> = ({
 
           // reference docs
           if (parsedData.type === 'extra_info') {
-            setMessageState((state) => ({
-              ...state,
-              pendingSourceDocs: parsedData.reference_index
-            }))
+            // PDF
+            if (parsedData.reference_index) {
+              setMessageState((state) => ({
+                ...state,
+                pendingSourceDocs: parsedData.reference_index
+              }))
+            }
+            if (parsedData.total_links) {
+              setMessageState((state) => ({
+                ...state,
+                pendingSourceDocs: parsedData.total_links
+              }))
+            }
           }
         }
       },
@@ -276,10 +291,45 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     m.role === 'assistant'
                   }
                 />
-                {m.role === 'assistant' && m.sourceDocs && (
-                  <div className="max-w-[90%] lg:max-w-[70%]">
+                {m.role === 'assistant' && m.sourceDocs?.length && (
+                  <div className="max-w-[90%] lg:max-w-[90%]">
                     <div className="reference-list">
-                      {m.sourceDocs.map((doc) => (
+                      {appType === 'chatAsset' &&
+                        (m.sourceDocs as PDFDoc[]).map((doc, index) => {
+                          return (
+                            <Collapse
+                              bordered={false}
+                              expandIcon={({ isActive }) => (
+                                <CaretRightOutlined
+                                  className="text-light-7 dark:text-dark-7"
+                                  rotate={isActive ? 90 : 0}
+                                />
+                              )}
+                              className="bg-light-0 dark:bg-dark-0"
+                            >
+                              <Collapse.Panel
+                                header={
+                                  <p className="text-light-7 dark:text-dark-7">
+                                    Reference{' '}
+                                    <span className="">[{index}]:</span>
+                                    <span>
+                                      {doc.file_name} - page: {doc.page}
+                                    </span>
+                                  </p>
+                                }
+                                key={index}
+                                style={panelStyle}
+                                className="tex-t bg-light-0 text-inherit dark:bg-dark-0"
+                              >
+                                <div className="text-light-7 dark:text-dark-7">
+                                  <p>{doc.page_content}</p>
+                                </div>
+                              </Collapse.Panel>
+                            </Collapse>
+                          )
+                        })}
+
+                      {appType === 'chatSearch' && (
                         <Collapse
                           bordered={false}
                           expandIcon={({ isActive }) => (
@@ -293,22 +343,31 @@ const ChatWindow: FC<ChatWindowProps> = ({
                           <Collapse.Panel
                             header={
                               <p className="text-light-7 dark:text-dark-7">
-                                Reference <span className="">[{index}]:</span>
-                                <span>
-                                  {doc.file_name} - page: {doc.page}
-                                </span>
+                                References
                               </p>
                             }
-                            key="1"
+                            // key="1"
+                            key={0}
                             style={panelStyle}
                             className="tex-t bg-light-0 text-inherit dark:bg-dark-0"
                           >
                             <div className="text-light-7 dark:text-dark-7">
-                              <p>{doc.page_content}</p>
+                              {m.sourceDocs.map((d) => {
+                                const doc = d as SearchDoc
+                                return (
+                                  <Button
+                                    type="link"
+                                    href={doc.link}
+                                    target="_blank"
+                                  >
+                                    {doc.title}
+                                  </Button>
+                                )
+                              })}
                             </div>
                           </Collapse.Panel>
                         </Collapse>
-                      ))}
+                      )}
                     </div>
                   </div>
                 )}

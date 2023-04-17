@@ -16,24 +16,18 @@ const ChatPrompt = () => {
   const steps: TourProps['steps'] = [
     {
       description:
-        'Search related prompts from lexica.art as example, ChatGPT use example to generate new prompt.',
+        'AI绘画Prompts生成器，输入想要绘画的关键信息，帮你生成可以提高作画质量的Prompt',
       title: 'Chat Prompt'
     },
 
     {
-      title: 'Upload File',
-      description: 'Put your files here.',
-      cover: (
-        <img
-          alt="tour.png"
-          src="https://user-images.githubusercontent.com/5378891/197385811-55df8480-7ff4-44bd-9d43-a7dade598d70.png"
-        />
-      ),
+      title: 'Generate Num',
+      description: '生成的Prompt数量',
       target: () => document.querySelector('#generateNum') as HTMLDivElement
     },
     {
-      title: 'Other Actions',
-      description: 'Click to see other actions.',
+      title: '提问',
+      description: '在这里输入您的问题。',
       target: () =>
         document.querySelector('#searchBarContainer') as HTMLDivElement
     }
@@ -64,7 +58,7 @@ const ChatPrompt = () => {
   return (
     <>
       <ChatWindow
-        apiEndPoint="http://49.233.4.96:30209/v1/ChatAPP/ChatPrompt"
+        apiEndPoint="https://service-qkv9clm1-1307467392.bj.apigw.tencentcs.com"
         transformPayload={(val) => {
           return {
             message: val.message,

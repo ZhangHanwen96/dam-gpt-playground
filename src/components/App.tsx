@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Button, ConfigProvider, Spin, Switch, theme } from 'antd'
-import { RollbackOutlined, LeftOutlined } from '@ant-design/icons'
+import { Button, ConfigProvider, Spin, theme } from 'antd'
+import { RollbackOutlined } from '@ant-design/icons'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import 'antd/dist/reset.css'
 import useTheme from '@/hooks/useTheme'
 import './App.css'
-import {
-  generateAuthBySSOTzCode,
-  SSOLoginPlatformType,
-  hasSSOLogin
-} from '@tezign/foundation-common/lib/utils/auth'
+// import {
+//   generateAuthBySSOTzCode,
+//   SSOLoginPlatformType,
+//   hasSSOLogin
+// } from '@tezign/foundation-common/lib/utils/auth'
 import IconMdiSunny from '~icons/mdi/white-balance-sunny'
 import IconMdiMoon from '~icons/mdi/moon-waning-crescent'
 import { FC } from 'react'
-import redirectToPageLogin from '@/http/redirectToLogin'
-import http from '@/http'
-import axios from 'axios'
+// import redirectToPageLogin from '@/http/redirectToLogin'
+// import http from '@/http'
+// import axios from 'axios'
 
 const { darkAlgorithm, defaultAlgorithm } = theme
 
@@ -64,12 +64,8 @@ function App() {
             ghost
             onClick={() => toggleTheme()}
           />
-
-          {/* <IconMdiMoon /> */}
-
           <h4 className="absolute left-1/2 -translate-x-1/2 text-[26px] font-semibold dark:text-dark-10">
             {type}
-            {/* <IconCarbonApps /> */}
           </h4>
         </nav>
         <main
