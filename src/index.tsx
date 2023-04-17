@@ -11,8 +11,8 @@ import { Button, Result } from 'antd'
 
 import App, { AuthProvider } from '@/components/App'
 import ErrorPage from '@/pages/ErrorPage'
-// import PlaygroudApp from '@/pages/PlaygroundApp'
 import Home from '@/pages/Home'
+import TenantLogin from '@/pages/TenantLogin'
 
 import './preflight.css'
 import 'tailwindcss/tailwind.css'
@@ -64,10 +64,8 @@ const routes: RouteObject[] = [
         children: [
           {
             path: ':type',
-            // element: <PlaygroudApp />
             lazy: async () => {
               const { default: Component } = await import(
-                /* @vite-ignore chunkName: "NamedChunkComponent" */
                 './pages/PlaygroundApp'
               )
               return {
@@ -76,6 +74,10 @@ const routes: RouteObject[] = [
             }
           }
         ]
+      },
+      {
+        path: 'tenant-login',
+        element: <TenantLogin />
       },
       {
         path: '*',
