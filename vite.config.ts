@@ -67,7 +67,8 @@ export default defineConfig({
           antd: ['antd']
         }
       }
-    }
+    },
+    outDir: 'dist/playground'
   },
   resolve: {
     alias: {
