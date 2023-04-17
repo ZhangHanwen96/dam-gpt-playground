@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ChatWindow from '@/pages/PlaygroundApp/ChatWindow'
 import { InputNumber, Space, Form, TourProps, Tour, theme } from 'antd'
 import { useLocalStorageState } from 'ahooks'
+import { showGuide } from '@/utils'
 
 const { Item } = Form
 
@@ -74,7 +75,7 @@ const ChatPrompt = () => {
       />
       <Tour
         type="primary"
-        open={open}
+        open={open && showGuide}
         onClose={() => setOpen(false)}
         steps={steps}
         mask={{

@@ -1,4 +1,5 @@
 import ChatWindow from '@/pages/PlaygroundApp/ChatWindow'
+import { showGuide } from '@/utils'
 import { useLocalStorageState } from 'ahooks'
 import { Tour, TourProps, theme } from 'antd'
 
@@ -30,7 +31,7 @@ const ChatSearch = () => {
       <ChatWindow apiEndPoint="http://49.233.4.96:30209/v1/ChatAPP/ChatSearch" />
       <Tour
         type="primary"
-        open={open}
+        open={open && showGuide}
         onClose={() => setOpen(false)}
         steps={steps}
         mask={{
