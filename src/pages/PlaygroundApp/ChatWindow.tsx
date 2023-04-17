@@ -93,6 +93,15 @@ const ChatWindow: FC<ChatWindowProps> = ({
       {
         role: 'assistant',
         content: '您好，请问有什么可以帮助你的吗? 😀'
+      },
+      {
+        role: 'user',
+        content: 'hello'
+      },
+      {
+        role: 'assistant',
+        content: '你好！有什么问题我可以帮您解答吗？',
+        sourceDocs: []
       }
     ]
   })
@@ -291,8 +300,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     m.role === 'assistant'
                   }
                 />
-                {m.role === 'assistant' && m.sourceDocs?.length && (
-                  <div className="max-w-[90%] lg:max-w-[90%]">
+                {m.role === 'assistant' && m.sourceDocs?.length ? (
+                  <div className="max-w-[100%] lg:max-w-[90%]">
                     <div className="reference-list">
                       {appType === 'chatAsset' &&
                         (m.sourceDocs as PDFDoc[]).map((doc, index) => {
@@ -346,13 +355,12 @@ const ChatWindow: FC<ChatWindowProps> = ({
                                 References
                               </p>
                             }
-                            // key="1"
-                            key={0}
+                            key="1"
                             style={panelStyle}
                             className="tex-t bg-light-0 text-inherit dark:bg-dark-0"
                           >
-                            <div className="text-light-7 dark:text-dark-7">
-                              {m.sourceDocs.map((d) => {
+                            <div className="text-light-7 dark:text-dark-7 overflow-x-auto items-start">
+                              {m.sourceDocs.map((d, idx) => {
                                 const doc = d as SearchDoc
                                 return (
                                   <Button
@@ -360,7 +368,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                                     href={doc.link}
                                     target="_blank"
                                   >
-                                    {doc.title}
+                                    [{idx}] {doc.title}
                                   </Button>
                                 )
                               })}
@@ -370,7 +378,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       )}
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             ))}
           </div>
