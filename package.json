@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:test": "pnpm run build",
+    "build": "vite build --mode production",
+    "build:test": "pnpm run build --mode testing",
     "serve": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",

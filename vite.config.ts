@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [
     react(),
     // splitVendorChunkPlugin(),
-    // tsconfigPaths(),
+    tsconfigPaths(),
     AutoImport({
       include: [
         /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx

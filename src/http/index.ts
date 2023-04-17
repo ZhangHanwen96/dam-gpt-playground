@@ -47,7 +47,7 @@ const createAxiosInstance = () => {
   console.log(initConfig())
   // 生成请求实例
   const instance = axios.create({
-    baseURL: constants.API_ORIGIN,
+    baseURL: import.meta.env.VITE_APP_ENV,
     ...initConfig(),
     adapter: retryAdapterEnhancer(
       cacheAdapterEnhancer(xhrAdapter, {
@@ -69,12 +69,12 @@ const createAxiosInstance = () => {
       const { status } = response as AxiosResponse
       // 499重定向
       if (status === 499) {
-        if (!isPublicPage(window.location.href)) {
-          cookies.remove(constants.COOKIE_X_TOKEN)
-          cookies.remove(constants.COOKIE_X_USER_ID)
-          cookies.remove(constants.C_XTENANTID)
-          redirectToPageLogin()
-        }
+        // if (!isPublicPage(window.location.href)) {
+        //   cookies.remove(constants.COOKIE_X_TOKEN)
+        //   cookies.remove(constants.COOKIE_X_USER_ID)
+        //   cookies.remove(constants.C_XTENANTID)
+        //   redirectToPageLogin()
+        // }
       } else {
         message.error(response.errorMessage)
       }

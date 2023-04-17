@@ -98,17 +98,17 @@ export const AuthProvider: FC<{ children: any }> = ({ children }) => {
 
   useEffect(() => {
     // http.get('https://dummyjson.com/products/1')
-    generateAuthBySSOTzCode(SSOLoginPlatformType.Vms)
-      .then((ssoInfo) => {
-        console.log(ssoInfo, 'ssoInfo')
-        console.log(hasSSOLogin(SSOLoginPlatformType.Vms))
-        if (!ssoInfo) {
-          redirectToPageLogin()
-        }
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+    // generateAuthBySSOTzCode(SSOLoginPlatformType.Vms)
+    //   .then((ssoInfo) => {
+    //     console.log(ssoInfo, 'ssoInfo')
+    //     console.log(hasSSOLogin(SSOLoginPlatformType.Vms))
+    //     if (!ssoInfo) {
+    //       redirectToPageLogin()
+    //     }
+    //   })
+    //   .finally(() => {
+    //     setLoading(false)
+    //   })
   }, [])
 
   return loading ? (

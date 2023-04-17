@@ -1,5 +1,5 @@
 import React from 'react'
-import Playground from '@/components/playground'
+import Playground from '@/components/Playground'
 import bg from '../../assets/museai-bg.png'
 // import Logo from '../../assets/museai-bg.svg'
 import './home.css'
