@@ -14,7 +14,7 @@ const FileDropZone: React.FC = () => {
 
   const props: UploadProps = {
     name: 'files',
-    multiple: false,
+    multiple: true,
     // onChange(info) {
     //   const { status } = info.file
     //   if (status !== 'uploading') {
