@@ -32,19 +32,19 @@ const cardListData: PCardProps[] = [
     cover: chatAsset
   },
   {
+    title: 'Chat Search',
+    category: '文字',
+    description: 'ChatGPT用它从互联网搜索有用的文章作为参考，来回答你的问题',
+    to: '/apps/chatSearch',
+    cover: chatSearch
+  },
+  {
     title: 'Chat Prompt',
     category: '文字',
     description:
       'AI绘画Prompts生成器，输入想要绘画的关键信息，帮你生成可以提高作画质量的Prompt',
     to: '/apps/chatPrompt',
     cover: chatPrompt
-  },
-  {
-    title: 'Chat Search',
-    category: '文字',
-    description: 'ChatGPT用它从互联网搜索有用的文章作为参考，来回答你的问题',
-    to: '/apps/chatSearch',
-    cover: chatSearch
   }
 ]
 
