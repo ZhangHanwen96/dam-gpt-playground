@@ -9,9 +9,11 @@ import {
 import clx from 'classnames'
 import styles from './index.module.scss'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
-import { ChatMessage } from '@/interface/ChatMessage'
+import { ChatMessage, SourceDoc } from '@/interface/ChatMessage'
 import { useFileStore } from '../../store/useFileStore'
 import MdChatMessage from './components/MDChatMessage'
+import isNil from 'lodash/isNil'
+import isEmpty from 'lodash/isEmpty'
 // import useMaterialSelector from 'components/MaterialSelector'
 
 const { TextArea } = Input
@@ -39,45 +41,80 @@ const testMessages = [
   }
 ]
 
+type EventData =
+  | {
+      type: 'generate_token'
+      gen_token: string
+    }
+  | {
+      type: 'extra_info'
+      reference_index: SourceDoc[]
+    }
+
 let rafId: number
 
 interface ChatWindowProps {
   searchBarTopArea?: React.ReactNode
+  apiEndPoint: string
+  transformPayload?: (value: {
+    message: string
+    chat_history: [string, string][]
+  }) => any
+  disabled?: boolean
 }
 
-const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
+const ChatWindow: FC<ChatWindowProps> = ({
+  searchBarTopArea,
+  apiEndPoint,
+  transformPayload = (v) => v,
+  disabled = false
+}) => {
   const chatRoomRef = useRef<HTMLDivElement | null>(null)
   const [question, setQ] = useState<string>('')
-
+  const questionRef = useRef<string>('')
   const [isStreaming, setIsStreaming] = useState(false)
-
   const [messageState, setMessageState] = useState<{
     history: [string, string][] // question, answer
     messages: ChatMessage[]
     pending?: string
+    pendingSourceDocs?: SourceDoc[]
   }>({
     history: [],
-    messages: [...testMessages, ...testMessages, ...testMessages] as any[]
+    messages: [
+      {
+        role: 'assistant',
+        content: '您好，请问有什么可以帮助你的吗? 😀'
+      },
+      ...testMessages,
+      ...testMessages,
+      ...testMessages,
+      ...testMessages
+    ]
   })
-
   const [networkError, setNetworkError] = useState<any>()
 
-  const { history, messages, pending } = messageState
+  const { history, messages, pending, pendingSourceDocs } = messageState
+
+  useUpdateEffect(() => {
+    console.log(messages)
+  }, [messages])
 
   const selectedFiles = useFileStore.use.selectedFiles?.()
   const fileOptions = useFileStore.use.fileOptions()
 
+  const isCompositionMode = useRef(false)
+
   useEffect(() => {
     if (chatRoomRef.current) {
       rafId && cancelAnimationFrame(rafId)
-      if (
-        chatRoomRef.current.scrollTop + chatRoomRef.current.clientHeight + 10 <
-        chatRoomRef.current.scrollHeight
-      ) {
-        return
-      }
+      // if (
+      //   chatRoomRef.current.scrollTop + chatRoomRef.current.clientHeight + 30 <
+      //   chatRoomRef.current.scrollHeight
+      // ) {
+      //   return
+      // }
       rafId = requestAnimationFrame(() => {
-        chatRoomRef.current!.scrollTop = chatRoomRef.current!.scrollHeight + 30
+        chatRoomRef.current!.scrollTop = chatRoomRef.current!.scrollHeight
       })
     }
   }, [chatRoomRef.current, pending, messages])
@@ -85,12 +122,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
   const chatMessages = useMemo(() => {
     return [
       ...messages,
-      ...(pending
+      ...(!isNil(pending)
         ? [
             {
               role: 'assistant',
-              content: pending
-              //   sourceDocs: pendingSourceDocs,
+              content: pending,
+              sourceDocs: pendingSourceDocs
             } as ChatMessage
           ]
         : [])
@@ -99,79 +136,96 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
 
   const abortCtrlRef = useRef<AbortController>()
 
-  const handleSearch = (question: string) => {
-    // getText(question)
-    // return
-    setMessageState((state) => ({
-      ...state,
-      messages: [
-        ...state.messages,
-        {
+  const handleSearch = (isRetry = false) => {
+    if (isStreaming) return
+    const q = questionRef.current
+    chatRoomRef.current!.scrollTop = chatRoomRef.current!.scrollHeight
+
+    if (networkError) {
+      setNetworkError(null)
+    }
+
+    setMessageState((state) => {
+      const newMessages = [...state.messages]
+      // keep the last one
+      if (!isRetry) {
+        newMessages.push({
           role: 'user',
-          content: question
-        }
-      ]
-    }))
+          content: q
+        })
+      }
+      return {
+        ...state,
+        messages: newMessages,
+        pending: ''
+      }
+    })
 
     setIsStreaming(true)
+    setQ('')
 
     const abortCtrl = (abortCtrlRef.current = new AbortController())
 
-    fetchEventSource('http://49.233.4.96:32056/stream', {
+    const payload = transformPayload({
+      message: q,
+      chat_history: history
+    })
+
+    fetchEventSource(apiEndPoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        query: question,
-        history,
-        fileIDs: selectedFiles?.map((v) => v.value)
-      }),
+      body: JSON.stringify(payload),
       signal: abortCtrl.signal,
       onclose() {
         setIsStreaming(false)
         console.log('close')
       },
       onmessage: (event) => {
+        // @zilong 的接口
         if (event.event === 'delta') {
-          const parsedData = JSON.parse(event.data)
-          console.log(parsedData.delta)
-          if (parsedData.delta === '[EOS]') {
-            setIsStreaming(false)
-            // setIsStreaming(false)
-            setMessageState((state) => ({
-              history: [...state.history, [question, state.pending ?? '']],
-              messages: [
-                ...state.messages,
-                {
-                  role: 'assistant',
-                  content: state.pending ?? ''
-                  // sourceDocs: state.pendingSourceDocs
-                }
-              ],
-              pending: undefined
-              // pendingSourceDocs: undefined
-            }))
-            //   setLoading(false)
-            abortCtrl.abort()
-          } else {
-            if (parsedData.sourceDocs) {
+          const parsedData = JSON.parse(event.data) as EventData
+
+          console.log(parsedData)
+
+          if (parsedData.type === 'generate_token') {
+            if (parsedData.gen_token === '[EOS]') {
+              setIsStreaming(false)
               setMessageState((state) => ({
-                ...state,
-                pendingSourceDocs: parsedData.sourceDocs
+                history: [...state.history, [q, state.pending ?? '']],
+                messages: [
+                  ...state.messages,
+                  {
+                    role: 'assistant',
+                    content: state.pending ?? '',
+                    sourceDocs: state.pendingSourceDocs
+                  }
+                ],
+                pending: undefined,
+                pendingSourceDocs: undefined
               }))
+              abortCtrl.abort()
             } else {
               setMessageState((state) => ({
                 ...state,
-                pending: (state.pending ?? '') + parsedData.delta
+                pending: (state.pending ?? '') + parsedData.gen_token
               }))
             }
+          }
+
+          // reference docs
+          if (parsedData.type === 'extra_info') {
+            setMessageState((state) => ({
+              ...state,
+              pendingSourceDocs: parsedData.reference_index
+            }))
           }
         }
       },
       onerror(err) {
         console.error(err)
-
+        abortCtrl.abort()
         setIsStreaming(false)
         setNetworkError(err)
       },
@@ -182,7 +236,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
   }
 
   const panelStyle = {
-    marginBottom: 24,
+    marginBottom: 8,
     border: 'none'
   }
 
@@ -197,8 +251,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
         ref={chatRoomRef}
         className={`h-full w-full overflow-y-scroll ${styles.gradient}`}
         style={{
-          // background:
-          // 'linear-gradient(180deg, #262626 0%, rgba(38, 38, 38, 0.67) 100%)',
           border: '1px solid #595959'
         }}
       >
@@ -212,37 +264,59 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
                   'mb-40': index === arr.length - 1
                 })}
               >
-                <MdChatMessage message={m} />
-                {m.role === 'assistant' && (
+                <MdChatMessage
+                  message={m}
+                  loading={
+                    index === arr.length - 1 &&
+                    isStreaming &&
+                    isEmpty(pending) &&
+                    m.role === 'assistant'
+                  }
+                  error={
+                    index === arr.length - 1 &&
+                    networkError &&
+                    m.role === 'assistant'
+                  }
+                />
+                {m.role === 'assistant' && m.sourceDocs && (
                   <div className="max-w-[70%]">
                     <div className="reference-list">
-                      <Collapse
-                        bordered={false}
-                        expandIcon={({ isActive }) => (
-                          <CaretRightOutlined
-                            className="text-light-7 dark:text-dark-7"
-                            rotate={isActive ? 90 : 0}
-                          />
-                        )}
-                        className="bg-light-0 dark:bg-dark-0 "
-                      >
-                        <Collapse.Panel
-                          header={
-                            <p className="text-light-7 dark:text-dark-7">
-                              Reference <span className="">[1]</span>
-                            </p>
+                      {m.sourceDocs.map((doc) => (
+                        <Collapse
+                          bordered={false}
+                          expandIcon={({ isActive }) => (
+                            <CaretRightOutlined
+                              className="text-light-7 dark:text-dark-7"
+                              rotate={isActive ? 90 : 0}
+                            />
+                          )}
+                          className="bg-light-0 dark:bg-dark-0"
+                          style={
+                            {
+                              // marginBottom: '8px'
+                            }
                           }
-                          key="1"
-                          style={panelStyle}
-                          className="tex-t bg-light-0 text-inherit dark:bg-dark-0"
                         >
-                          <div className="text-light-7 dark:text-dark-7">
-                            <p>asdadadasd</p>
-                          </div>
-                        </Collapse.Panel>
-                      </Collapse>
+                          <Collapse.Panel
+                            header={
+                              <p className="text-light-7 dark:text-dark-7">
+                                Reference <span className="">[{index}]:</span>
+                                <span>
+                                  {doc.file_name} - page: {doc.page}
+                                </span>
+                              </p>
+                            }
+                            key="1"
+                            style={panelStyle}
+                            className="tex-t bg-light-0 text-inherit dark:bg-dark-0"
+                          >
+                            <div className="text-light-7 dark:text-dark-7">
+                              <p>{doc.page_content}</p>
+                            </div>
+                          </Collapse.Panel>
+                        </Collapse>
+                      ))}
                     </div>
-                    {networkError && <span>something went wrong</span>}
                   </div>
                 )}
               </div>
@@ -258,15 +332,15 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
         >
           <ConfigProvider
             theme={{
-              token: {
-                // colorPrimary: '#00b96b',
-                // colorPrimary: ',
-                // colorBgBase: '#141414''
-              },
+              token: {},
               algorithm: defaultAlgorithm
             }}
           >
             <TextArea
+              style={{
+                pointerEvents: disabled ? 'none' : 'auto',
+                cursor: disabled ? 'not-allowed' : 'auto'
+              }}
               size="middle"
               id="searchBar"
               placeholder="Send a message..."
@@ -278,21 +352,30 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
                 setQ(e.target.value)
               }}
               onKeyDown={(e) => {
-                if (e.code === 'Enter') {
+                if (e.code === 'Enter' && !isCompositionMode.current) {
                   e.preventDefault()
                   // @ts-ignore
-                  handleSearch(e.target.value)
-                  setQ('')
-                  return
+                  questionRef.current = e.target.value
+                  handleSearch()
                 }
+              }}
+              onCompositionStart={() => {
+                isCompositionMode.current = true
+              }}
+              onCompositionEnd={() => {
+                isCompositionMode.current = false
               }}
             />
             <Button
+              disabled={disabled}
               type="text"
+              onClick={() => {
+                questionRef.current = question
+                handleSearch()
+              }}
+              // disabled={disabled}
               icon={<SendOutlined />}
               className="absolute bottom-2 right-2 flex items-center justify-center"
-              loading={false}
-              disabled={false}
               ghost
             ></Button>
           </ConfigProvider>
@@ -315,12 +398,13 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
                   if (lastMessage.role === 'assistant') {
                     return {
                       ...state,
-                      messages: state.messages.slice(0, -1)
+                      messages: state.messages.slice(0, -1),
+                      pending: undefined
                     }
                   }
                   return state
                 })
-                handleSearch(question)
+                handleSearch(true)
               }}
             >
               重新加载
@@ -355,7 +439,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ searchBarTopArea }) => {
         </div>
       </div>
 
-      {!fileOptions && (
+      {!fileOptions?.length && (
         <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
           <svg
             width="112"

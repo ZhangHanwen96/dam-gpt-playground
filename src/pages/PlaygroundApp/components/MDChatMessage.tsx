@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react'
-import { Avatar, Button } from 'antd'
+import { Avatar, Button, Spin } from 'antd'
 import { CopyOutlined, UserOutlined } from '@ant-design/icons'
 import clx from 'classnames'
 import ReactMd from 'react-markdown'
@@ -49,10 +49,33 @@ const AssistantAvatar = () => (
   </svg>
 )
 
+const content = `
+show me how to use react \`useEffect\`
+
+~~~typescript
+function MyComponent() {
+    const [count, setCount] = useState(0);
+  
+    useEffect(() => {
+      // Code to count how many times the button is clicked
+      // ...
+    }, [count]);
+  
+    return (
+      <p>
+        You clicked the button {count} times.
+      </p>
+    );
+}
+~~~
+`
+
 const MdChatMessage: React.FC<{
   message: ChatMessage
   className?: string
-}> = ({ message, className }) => {
+  error?: boolean
+  loading?: boolean
+}> = ({ message, className, error = false, loading = false }) => {
   const userRole = message.role === 'user'
   const cls = userRole ? styles.user : styles.assistant
   return (
@@ -76,46 +99,56 @@ const MdChatMessage: React.FC<{
             : 'bg-light-10 dark:bg-dark-10 text-light-0 dark:text-dark-0',
           'px-5 py-2',
           'markdown-body',
+          { 'bg-orange-500': error }
         ])}
       >
-        <ReactMd
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || '')
-              return !inline && match ? (
-                <div className="markdown-code-block">
-                  <div className="-mb-2 w-full rounded-t-md bg-[rgb(116,109,109)] py-2 text-white">
-                    {' '}
-                    <span>{match[1]}</span>
-                    <CopyButton />
+        {error ? (
+          <span className="italic">Something went wrong...</span>
+        ) : loading ? (
+          <Spin size="small" />
+        ) : (
+          <ReactMd
+            components={{
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || '')
+                return !inline && match ? (
+                  <div className="markdown-code-block">
+                    <div className="-mb-2 w-full flex justify-between px-4 rounded-t-md bg-[rgb(116,109,109)] py-2 text-white">
+                      {' '}
+                      <span>{match[1]}</span>
+                      <CopyButton />
+                    </div>
+                    <SyntaxHighlighter
+                      {...props}
+                      style={materialLight}
+                      language={match[1]}
+                      PreTag="div"
+                      className={`${className}`}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
                   </div>
-                  <SyntaxHighlighter
+                ) : (
+                  // <div className="markdown-code-block">
+                  //   <div className="w-full rounded-t-md bg-[rgb(116,109,109)] py-2 text-white">
+                  //     {'  '}
+                  //   </div>
+                  //   <div className="overflow-auto">
+                  <code
                     {...props}
-                    style={materialLight}
-                    language={match[1]}
-                    PreTag="div"
-                    className={`${className}`}
+                    className={clx([className, 'inline-code-block'])}
                   >
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                </div>
-              ) : (
-                // <div className="markdown-code-block">
-                //   <div className="w-full rounded-t-md bg-[rgb(116,109,109)] py-2 text-white">
-                //     {'  '}
-                //   </div>
-                //   <div className="overflow-auto">
-                    <code {...props} className={clx([className, 'inline-code-block'])}>
-                      {children}
-                    </code>
+                    {children}
+                  </code>
                   // </div>
-                // </div>
-              )
-            }
-          }}
-        >
-          {message.content}
-        </ReactMd>
+                  // </div>
+                )
+              }
+            }}
+          >
+            {message.content}
+          </ReactMd>
+        )}
       </div>
     </div>
   )

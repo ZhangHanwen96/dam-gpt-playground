@@ -63,12 +63,11 @@ const SearchBarAreaPDF: FC = () => {
         上传 PDF
       </Button>
       <Select
-        defaultValue="lucy"
         className="w-full xl:w-2/3"
         onChange={(values, opt) => {
           console.log(values, opt)
           // @ts-ignore
-          setselectedFiles(ensureArrary(values))
+          setselectedFiles(ensureArrary(opt))
         }}
         options={fileOptions}
         loading={useFileStore.use.loading()}
@@ -90,6 +89,8 @@ function ChatPDF() {
   const [open, setOpen] = useLocalStorageState('tour:chatPDF', {
     defaultValue: true
   })
+
+  const selectedFlies = useFileStore.use.selectedFiles?.()
 
   const token = useToken()
 
@@ -117,9 +118,21 @@ function ChatPDF() {
     }
   ]
 
+  console.log(selectedFlies, 444444)
+
   return (
     <>
-      <ChatWindow searchBarTopArea={<SearchBarAreaPDF />} />
+      <ChatWindow
+        searchBarTopArea={<SearchBarAreaPDF />}
+        apiEndPoint="http://49.233.4.96:30209/v1/ChatAPP/ChatAsset"
+        transformPayload={(val) => {
+          return {
+            ...val,
+            file_ids: selectedFlies?.map((f) => f.value)
+          }
+        }}
+        disabled={!selectedFlies?.length}
+      />
       <Tour
         type="primary"
         open={open}

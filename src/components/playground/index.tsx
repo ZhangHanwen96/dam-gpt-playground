@@ -2,6 +2,9 @@ import { Card, Col, Row, Skeleton } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import ResponsiveBox from '../Reponsive/Box'
 import { FC } from 'react'
+import chatPrompt from '@/assets/chatPrompt.png'
+import chatAsset from '@/assets/chatAsset.png'
+import chatSearch from '@/assets/chatSearch.png'
 
 const gridConfig = {
   xs: 24,
@@ -16,30 +19,36 @@ type PCardProps = {
   title: string
   category: string
   to: string
+  cover: string
 }
 
 const cardListData: PCardProps[] = [
   {
     title: 'Chat Asset',
-    category: 'C2',
-    description: 'This is the description',
-    to: '/apps/chatAsset'
+    category: '文字',
+    description:
+      '基于私有知识库的问答工具，利用私有知识快速帮助用户回答领域内的知识。',
+    to: '/apps/chatAsset',
+    cover: chatAsset
   },
   {
     title: 'Chat Prompt',
-    category: 'C1',
-    description: 'This is the description',
-    to: '/apps/chatPrompt'
+    category: '文字',
+    description:
+      'AI绘画Prompts生成器，输入想要绘画的关键信息，帮你生成可以提高作画质量的Prompt',
+    to: '/apps/chatPrompt',
+    cover: chatPrompt
   },
   {
     title: 'Chat Search',
-    category: 'C1',
-    description: 'This is the description',
-    to: '/apps/chatSearch'
+    category: '文字',
+    description: 'ChatGPT用它从互联网搜索有用的文章作为参考，来回答你的问题',
+    to: '/apps/chatSearch',
+    cover: chatSearch
   }
 ]
 
-const PCard: FC<PCardProps> = ({ category, description, title, to }) => {
+const PCard: FC<PCardProps> = ({ category, description, title, to, cover }) => {
   const navigate = useNavigate()
   return (
     <div
@@ -52,9 +61,11 @@ const PCard: FC<PCardProps> = ({ category, description, title, to }) => {
       }}
     >
       <ResponsiveBox
-        className="mb-4 rounded-xl bg-[#576272]"
+        className="mb-4 rounded-lg overflow-hidden bg-[#576272]"
         ratio={2.3}
-      ></ResponsiveBox>
+      >
+        <img src={cover} alt="" />
+      </ResponsiveBox>
       <div className="text-2xl text-white">{title}</div>
       <div className="min-h-[2.5rem] text-sm text-[#858E99]">{description}</div>
       <div className="mt-4 flex flex-row">

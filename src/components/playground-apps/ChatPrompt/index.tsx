@@ -5,23 +5,6 @@ import { useLocalStorageState } from 'ahooks'
 
 const { Item } = Form
 
-const SearchBarArea = () => {
-  return (
-    <Space>
-      <Item label="Generate Num">
-        <InputNumber
-          controls={true}
-          min={1}
-          max={5}
-          defaultValue={2}
-          className="w-24"
-          id="generateNum"
-        />
-      </Item>
-    </Space>
-  )
-}
-
 const { useToken } = theme
 
 const ChatPrompt = () => {
@@ -57,9 +40,38 @@ const ChatPrompt = () => {
 
   const { token } = useToken()
 
+  const genNumRef = useRef(2)
+
+  const searchBarArea = (
+    <Space>
+      <Item label="Generate Num">
+        <InputNumber
+          controls={true}
+          onChange={(val) => {
+            genNumRef.current = val as number
+          }}
+          min={1}
+          max={5}
+          defaultValue={2}
+          className="w-24"
+          id="generateNum"
+        />
+      </Item>
+    </Space>
+  )
+
   return (
     <>
-      <ChatWindow searchBarTopArea={<SearchBarArea />} />
+      <ChatWindow
+        apiEndPoint="http://49.233.4.96:30209/v1/ChatAPP/ChatPrompt"
+        transformPayload={(val) => {
+          return {
+            message: val.message,
+            generate_num: genNumRef.current
+          }
+        }}
+        searchBarTopArea={searchBarArea}
+      />
       <Tour
         type="primary"
         open={open}

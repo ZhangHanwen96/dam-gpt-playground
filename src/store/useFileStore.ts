@@ -18,25 +18,11 @@ type Actions = {
   setFileOptions: (opt: fileOptions[]) => void
 }
 
-// @ts-ignore
-const createFileSlice = (set) => ({
-  selectedFiles: undefined,
-  setselectedFiles: (opt: fileOptions[]) => {
-    // @ts-ignore
-    set((state) => {
-      state.selectedPDF = opt
-    })
-  }
-})
 
 const _useFileStore = create(
   persist(
     immer<State & Actions>((set) => ({
-      fileOptions: [
-        { value: 'jack', label: 'Jack' },
-        { value: 'lucy', label: 'Lucy-as asd.fileOptions' },
-        { value: 'Yiminghe', label: 'yiminghe' }
-      ],
+      fileOptions: [],
       setFileOptions: (options: fileOptions[]) => {
         set((state) => {
           state.fileOptions = [...state.fileOptions, ...options]
@@ -54,13 +40,24 @@ const _useFileStore = create(
         //   state.loading = false
         // })
       },
-      ...createFileSlice(set)
+      selectedFiles: undefined,
+      setselectedFiles: (opt: fileOptions[]) => {
+        // @ts-ignore
+        set((state) => {
+          state.selectedFiles = [...opt]
+        })
+      }
     })),
     {
       name: 'chat-asset-store',
-      version: 1
+      version: 1,
     }
   )
 )
+
+
+_useFileStore.setState({
+  selectedFiles: undefined
+})
 
 export const useFileStore = createSelectors(_useFileStore)
