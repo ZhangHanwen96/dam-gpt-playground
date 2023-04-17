@@ -1,30 +1,30 @@
-import { FC } from "react"
+import { FC } from 'react'
 import MdiContentCopy from '~icons/mdi/content-copy'
 import MdiCheck from '~icons/mdi/check'
 
+const CopyButton: FC<any> = ({ className, contentFn, size }) => {
+  const [copied, setCopied] = useState(false)
 
-const  CopyButton: FC<any> = ({ className, contentFn, size }) => {
-    const [copied, setCopied] = useState(false)
-  
-    const onClick = () => {
-      navigator.clipboard
-        .writeText(contentFn())
-        .then(() => setCopied(true))
-        .then(() =>
-          setTimeout(() => {
-            setCopied(false)
-          }, 600),
-        )
-    }
-  
-    return (
-      <span
-        title={'Copy'}
-        onClick={onClick}
-      >
-        {copied ? <MdiCheck /> : <MdiContentCopy />}
-      </span>
-    )
+  const onClick = () => {
+    navigator.clipboard
+      .writeText(contentFn())
+      .then(() => setCopied(true))
+      .then(() =>
+        setTimeout(() => {
+          setCopied(false)
+        }, 600)
+      )
   }
 
-  export default CopyButton
+  return (
+    <span
+      title={'Copy'}
+      className="anticon hover:bg-dark-5 p-1 duration-100 ease-linear rounded-sm cursor-pointer"
+      onClick={onClick}
+    >
+      {copied ? <MdiCheck /> : <MdiContentCopy />}
+    </span>
+  )
+}
+
+export default CopyButton
