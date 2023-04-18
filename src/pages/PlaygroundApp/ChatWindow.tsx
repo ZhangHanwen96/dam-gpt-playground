@@ -311,7 +311,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
                                 header={
                                   <p className="text-light-7 dark:text-dark-7">
                                     Reference{' '}
-                                    <span className="">[{index}]:</span>
                                     <span>
                                       {doc.file_name} - page: {doc.page}
                                     </span>
@@ -350,7 +349,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                             style={panelStyle}
                             className="tex-t bg-light-0 text-inherit dark:bg-dark-0"
                           >
-                            <div className="text-light-7 dark:text-dark-7 overflow-x-auto items-start">
+                            <div className="text-light-7 dark:text-dark-7 overflow-x-auto items-start flex flex-col">
                               {m.sourceDocs.map((d, idx) => {
                                 const doc = d as SearchDoc
                                 return (
@@ -359,7 +358,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                                     href={doc.link}
                                     target="_blank"
                                   >
-                                    [{idx}] {doc.title}
+                                    {doc.title}
                                   </Button>
                                 )
                               })}
