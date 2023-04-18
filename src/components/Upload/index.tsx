@@ -75,17 +75,12 @@ const FileDropZone: React.FC = () => {
   }, [])
 
   return (
-    <Dragger {...props} onChange={onChange}>
+    <Dragger {...props} onChange={onChange} className="w-full">
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>
-      <p className="ant-upload-text">
-        Click or drag file to this area to upload
-      </p>
-      <p className="ant-upload-hint">
-        Support for a single or bulk upload. Strictly prohibited from uploading
-        company data or other banned files.
-      </p>
+      <p className="ant-upload-text">点击或者拖拽文件到此处</p>
+      <p className="ant-upload-hint">支持单个或多个文件上传。</p>
     </Dragger>
   )
 }

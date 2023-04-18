@@ -312,7 +312,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
                                   <p className="text-light-7 dark:text-dark-7">
                                     Reference{' '}
                                     <span>
-                                      {doc.file_name} - page: {doc.page}
+                                      {doc.file_name} - page:{' '}
+                                      {Number(doc.page) + 1}
                                     </span>
                                   </p>
                                 }
