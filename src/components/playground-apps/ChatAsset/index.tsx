@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { FC } from 'react'
 import ChatWindow from '@/pages/PlaygroundApp/ChatWindow'
-import { UploadOutlined } from '@ant-design/icons'
-import { Button, Modal, Select, Space, Tour, TourProps, theme } from 'antd'
+import { UploadOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons'
+import { Button, Dropdown, Select, Space, Tour, TourProps, theme } from 'antd'
 import { useFileStore } from '@/store/useFileStore'
 import FileDropZone from '../../Upload'
-import { useLocalStorageState } from 'ahooks'
+import { useLocalStorageState, useResponsive } from 'ahooks'
 import { useMaterialSelector } from '@/hooks/useMaterialSelector'
 import showModal from '@/components/show-modal'
 import { showGuide } from '@/utils'
+import clx from 'classnames'
 
 const ensureArrary = (value: any) => {
   if (Array.isArray(value)) {
@@ -19,8 +20,14 @@ const ensureArrary = (value: any) => {
 
 const SearchBarAreaPDF: FC = () => {
   const fileOptions = useFileStore.use.fileOptions()
-  const fetchfileOptions = useFileStore.use.fetchFileOptions()
+  // const fetchfileOptions = useFileStore.use.fetchFileOptions()
   const setselectedFiles = useFileStore.use.setselectedFiles()
+  const setFileOptions = useFileStore.use.setFileOptions()
+  const responsive = useResponsive()
+
+  const isBelowMd = !responsive.md
+
+  const selectedFiles = useFileStore.use.selectedFiles?.() ?? []
   const { showMaterialSelector } = useMaterialSelector({
     filterCode: 'open-component-search-002',
     onOk(data) {
@@ -38,7 +45,7 @@ const SearchBarAreaPDF: FC = () => {
         </div>
       ),
       afterClose() {
-        fetchfileOptions('pdf')
+        // fetchfileOptions('pdf')
       },
       closable: true,
       onOk(e) {
@@ -48,28 +55,45 @@ const SearchBarAreaPDF: FC = () => {
     })
   }
 
+  const removeFilesFromLocalStorage = () => {
+    setselectedFiles(null)
+    setFileOptions(null)
+  }
+
   return (
-    <Space className="w-full [&>div:nth-child(3)]:w-full">
-      <Button onClick={showMaterialSelector} type="primary">
-        素材选择器
-      </Button>
-      <Button
-        icon={<UploadOutlined />}
-        type="primary"
-        onClick={() => {
-          showUploadModal()
-        }}
-        id="uploadFiles"
-      >
-        上传 PDF
-      </Button>
+    <Space
+      className={clx([
+        'w-full',
+        isBelowMd
+          ? '[&>div:nth-child(1)]:w-full'
+          : '[&>div:nth-child(3)]:w-full'
+      ])}
+    >
+      {!isBelowMd && (
+        <>
+          <Button onClick={showMaterialSelector} type="primary">
+            素材选择器
+          </Button>
+          <Button
+            icon={<UploadOutlined />}
+            type="primary"
+            onClick={() => {
+              showUploadModal()
+            }}
+            id="uploadFiles"
+          >
+            上传 PDF
+          </Button>
+        </>
+      )}
       <Select
-        className="w-full xl:w-2/3"
+        className="w-full"
         onChange={(values, opt) => {
           console.log(values, opt)
           // @ts-ignore
           setselectedFiles(ensureArrary(opt))
         }}
+        value={selectedFiles}
         options={fileOptions}
         loading={useFileStore.use.loading()}
         allowClear
@@ -80,6 +104,36 @@ const SearchBarAreaPDF: FC = () => {
         maxTagTextLength={15}
         rootClassName="selectFilesRoot"
       />
+      <Button
+        danger
+        onClick={() => {
+          removeFilesFromLocalStorage()
+        }}
+        icon={<DeleteOutlined />}
+      ></Button>
+      {isBelowMd && (
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: '1',
+                label: '素材选择器',
+                title: '素材选择器',
+                onClick: showMaterialSelector
+              },
+              {
+                key: '2',
+                label: '上传 PDF',
+                title: '上传 PDF',
+                onClick: showUploadModal
+              }
+            ]
+          }}
+          trigger={['click', 'hover']}
+        >
+          <Button icon={<MoreOutlined />} />
+        </Dropdown>
+      )}
     </Space>
   )
 }

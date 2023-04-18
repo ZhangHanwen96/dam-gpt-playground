@@ -1,1 +1,1 @@
-export const showGuide = window.matchMedia('(min-width: 600px)').matches
+export const showGuide = window.matchMedia('(min-width: 576px)').matches

@@ -10,6 +10,7 @@ const { Dragger } = Upload
 
 const FileDropZone: React.FC = () => {
   const setFileOptions = useFileStore.use.setFileOptions()
+  const setSelectedFiles = useFileStore.use.setselectedFiles()
   const [fileList, setFileList] = useState<RcFile[]>([])
 
   const props: UploadProps = {
@@ -61,7 +62,10 @@ const FileDropZone: React.FC = () => {
       if (res.data[0].parse_status === 'success') {
         const fileID = res.data[0].file_id
         const filename = res.data[0].file_name
-        setFileOptions([{ value: fileID, label: filename }])
+        setFileOptions((pre) => [...pre, { value: fileID, label: filename }])
+        setSelectedFiles((pre) => {
+          return [...pre, { value: fileID, label: filename }]
+        })
       } else {
         message.error('文件上传成功，但解析失败')
       }

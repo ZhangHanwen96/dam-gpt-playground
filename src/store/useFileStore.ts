@@ -14,8 +14,8 @@ type State = {
 
 type Actions = {
   fetchFileOptions: (type?: 'pdf') => Promise<void>
-  setselectedFiles: (opt: fileOptions[]) => void
-  setFileOptions: (opt: fileOptions[]) => void
+  setselectedFiles: (opt: fileOptions[] | null | ((pre: fileOptions[]) => fileOptions[])) => void
+  setFileOptions: (opt: fileOptions[] | null | ((pre: fileOptions[]) => fileOptions[])) => void
 }
 
 
@@ -23,9 +23,22 @@ const _useFileStore = create(
   persist(
     immer<State & Actions>((set) => ({
       fileOptions: [],
-      setFileOptions: (options: fileOptions[]) => {
+      setFileOptions: (options: fileOptions[] | null | ((pre: fileOptions[]) => fileOptions[])) => {
+        if(options === null) {
+          set((state) => {
+            state.fileOptions = []
+          })
+          return;
+        }
+        if(typeof options === 'function') {
+          set((state) => {
+            state.fileOptions = options(state.fileOptions)
+          })
+          return;
+        }
+
         set((state) => {
-          state.fileOptions = [...state.fileOptions, ...options]
+          state.fileOptions = [...options]
         })
       },
       loading: false,
@@ -41,7 +54,19 @@ const _useFileStore = create(
         // })
       },
       selectedFiles: undefined,
-      setselectedFiles: (opt: fileOptions[]) => {
+      setselectedFiles: (opt: fileOptions[] | null | ((opt: fileOptions[]) => fileOptions[])) => {
+        if(opt === null) {
+          set((state) => {
+            state.selectedFiles = undefined
+          })
+          return;
+        }
+        if(typeof opt === 'function') {
+          set((state) => {
+            state.selectedFiles = opt(state.selectedFiles || [])
+          })
+          return;
+        }
         // @ts-ignore
         set((state) => {
           state.selectedFiles = [...opt]
