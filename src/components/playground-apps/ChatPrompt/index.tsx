@@ -39,7 +39,7 @@ const ChatPrompt = () => {
 
   const searchBarArea = (
     <Space>
-      <Item label="Generate Num">
+      <Item label="生成的prompt的数量">
         <InputNumber
           controls={true}
           onChange={(val) => {

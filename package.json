@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build --mode production",
     "build:test": "pnpm run build --mode testing",
+    "build:prod": "pnpm run build --mode production",
     "serve": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
