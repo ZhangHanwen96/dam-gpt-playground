@@ -5,15 +5,15 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import 'antd/dist/reset.css'
 import useTheme from '@/hooks/useTheme'
 import './App.css'
-// import {
-//   generateAuthBySSOTzCode,
-//   SSOLoginPlatformType,
-//   hasSSOLogin
-// } from '@tezign/foundation-common/lib/utils/auth'
+import {
+  generateAuthBySSOTzCode,
+  SSOLoginPlatformType,
+  hasSSOLogin
+} from '@tezign/foundation-common/lib/utils/auth'
 import IconMdiSunny from '~icons/mdi/white-balance-sunny'
 import IconMdiMoon from '~icons/mdi/moon-waning-crescent'
 import { FC } from 'react'
-// import redirectToPageLogin from '@/http/redirectToLogin'
+import redirectToPageLogin from '@/http/redirectToLogin'
 // import http from '@/http'
 // import axios from 'axios'
 
@@ -93,18 +93,17 @@ export const AuthProvider: FC<{ children: any }> = ({ children }) => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    // http.get('https://dummyjson.com/products/1')
-    // generateAuthBySSOTzCode(SSOLoginPlatformType.Vms)
-    //   .then((ssoInfo) => {
-    //     console.log(ssoInfo, 'ssoInfo')
-    //     console.log(hasSSOLogin(SSOLoginPlatformType.Vms))
-    //     if (!ssoInfo) {
-    //       redirectToPageLogin()
-    //     }
-    //   })
-    //   .finally(() => {
-    //     setLoading(false)
-    //   })
+    generateAuthBySSOTzCode(SSOLoginPlatformType.Vms)
+      .then((ssoInfo) => {
+        console.log(ssoInfo, 'ssoInfo')
+        console.log(hasSSOLogin(SSOLoginPlatformType.Vms))
+        if (!ssoInfo) {
+          redirectToPageLogin()
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [])
 
   return loading ? (

@@ -6,10 +6,10 @@ import showModal from '@/components/show-modal'
 import { redirect } from 'react-router-dom'
 
 async function redirectToPageLogin(redirectUrl?: string) {
-  let tenantId = cookies.get(constants.C_XTENANTID) as string
+  const tenantId = cookies.get(constants.C_XTENANTID) as string
   const {
-    location: { pathname, search, origin },
-  } = window;
+    location: { pathname, search, origin }
+  } = window
 
   // if (!tenantId) {
   //   const tenantData = await fetchTenantInfo()
@@ -18,13 +18,12 @@ async function redirectToPageLogin(redirectUrl?: string) {
   //   cookies.set(constants.C_XTENANTID, tenantId!, { expires: 365 })
   // }
   // No tenant id => prompt user to get tenant id
-  if(!tenantId) {
-      return redirect('/tenant-login')
-  }
-
+  // if (!tenantId) {
+  //   return redirect('/tenant-login')
+  // }
 
   getSSOAuthUrlForTenant({
-    tenantId: 't5',
+    tenantId: tenantId,
     redirectUrl: redirectUrl || `${origin}${pathname}${search}`,
     lang: cookies.get(constants.X_LANG) || 'zh-CN'
   }).then((url: string) => {
